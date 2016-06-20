@@ -1,4 +1,11 @@
 #include "img_proc.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/types_c.h>
+#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <stdio.h>
+#include <iostream>
 
 using namespace cv;
 
@@ -63,5 +70,40 @@ IplImage *Img_proc::doCanny(IplImage *image, double lowThresh,double highThreash
     cvCanny(image, image_out,lowThresh, highThreash,aperture);
 
     return image_out;
+
+}
+
+void Img_proc::set_bright(int ctrst, int brt, char *imgpath)
+{
+
+    int constra = ctrst;
+    int brit = brt;
+    Mat g_srcimg = imread(imgpath);
+    Mat g_destimg = Mat::zeros(g_srcimg.size(), g_srcimg.type());
+
+
+
+    for(int y = 0; y < g_srcimg.rows; y++){
+
+        for(int x = 0; x < g_srcimg.cols; x++){
+
+            for(int c = 0; c < 3; c++){
+
+                g_destimg.at<Vec3b>(y,x)[c] = saturate_cast<uchar>((constra*0.01)*(g_srcimg.at<Vec3b>(y,x)[c]) + brit);
+
+            }
+
+        }
+
+    }
+
+    namedWindow("show set_bright_SRC", 1);
+    imshow("show set_bright_SRC", g_srcimg);
+
+    namedWindow("show set_bright_DST", 1);
+    imshow("show set_bright_DST", g_destimg);
+
+
+
 
 }
